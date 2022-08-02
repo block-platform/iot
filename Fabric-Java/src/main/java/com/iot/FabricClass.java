@@ -1,3 +1,5 @@
+package com.iot;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -26,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public final class FabricClass {
@@ -64,25 +67,6 @@ public final class FabricClass {
         var network = gateway.getNetwork(channelName);
         // Get the smart contract from the network.
         contract = network.getContract(chaincodeName);
-    }
-
-    public boolean pushIPFSHashToFabric(String deviceId, String hash){
-        try {
-            System.out.println("\n--> Submit Transaction: pushIPFSHashToFabric");
-            // if any parameter is null, set it to empty string
-            Asset originalAsset = readAsset(deviceId);
-            if (originalAsset == null){
-                return false;
-            }
-            contract.submitTransaction("UpdateAsset", deviceId, originalAsset.owner, originalAsset.name, originalAsset.region,
-                    hash, new Gson().toJson(originalAsset.authorizedDevices), new Gson().toJson(originalAsset.authorizedUsers));
-            System.out.println("******** pushIPFSHashToFabric transaction committed successfully");
-            return true;
-        } catch (EndorseException | SubmitException | CommitStatusException | CommitException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
     }
 
     private ManagedChannel newGrpcConnection() throws IOException, CertificateException {
@@ -135,4 +119,44 @@ public final class FabricClass {
         }
     }
 
+    public String updateAccessPolicy(String deviceId, ArrayList<String> authorizedDevices,
+                                     ArrayList<String> authorizedUsers) {
+        try {
+            System.out.println("\n--> Submit Transaction: updateAccessPolicy");
+            // if any parameter is null, set it to empty string
+            Asset originalAsset = readAsset(deviceId);
+            if (originalAsset == null){
+                return "Error updating policy: either this ID doesn't exist or there was an issue on Fabric side while reading asset.";
+            }
+            originalAsset.authorizedDevices.addAll(authorizedDevices);
+            originalAsset.authorizedUsers.addAll(authorizedUsers);
+            contract.submitTransaction("UpdateAsset", deviceId, originalAsset.owner, originalAsset.name, originalAsset.region,
+                    originalAsset.iPFSHash, new Gson().toJson(originalAsset.authorizedDevices), new Gson().toJson(originalAsset.authorizedUsers));
+            System.out.println("******** updateAccessPolicy transaction committed successfully");
+            return "Success";
+        } catch (EndorseException | SubmitException | CommitStatusException | CommitException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return "Error while updating policy";
+        }
+    }
+
+    public String pushIPFSHashToFabric(String deviceId, String hash){
+        try {
+            System.out.println("\n--> Submit Transaction: pushIPFSHashToFabric");
+            // if any parameter is null, set it to empty string
+            Asset originalAsset = readAsset(deviceId);
+            if (originalAsset == null){
+                return "Error updating policy: either this ID doesn't exist or there was an issue on Fabric side while reading asset.";
+            }
+            contract.submitTransaction("UpdateAsset", deviceId, originalAsset.owner, originalAsset.name, originalAsset.region,
+                    hash, new Gson().toJson(originalAsset.authorizedDevices), new Gson().toJson(originalAsset.authorizedUsers));
+            System.out.println("******** pushIPFSHashToFabric transaction committed successfully");
+            return "Success";
+        } catch (EndorseException | SubmitException | CommitStatusException | CommitException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return "Error updating the IPFS hash: " + e.getMessage();
+        }
+    }
 }
