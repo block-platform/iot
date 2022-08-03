@@ -18,4 +18,6 @@ public class Asset {
     public ArrayList<String> authorizedDevices;
     @JsonProperty("AuthorizedUsers")
     public ArrayList<String> authorizedUsers;
+    @JsonProperty("UpdatedAt")
+    public String updatedAt;
 }

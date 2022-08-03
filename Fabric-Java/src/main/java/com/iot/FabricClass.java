@@ -119,35 +119,12 @@ public final class FabricClass {
         }
     }
 
-    public String updateAccessPolicy(String deviceId, ArrayList<String> authorizedDevices,
-                                     ArrayList<String> authorizedUsers) {
-        try {
-            System.out.println("\n--> Submit Transaction: updateAccessPolicy");
-            // if any parameter is null, set it to empty string
-            Asset originalAsset = readAsset(deviceId);
-            if (originalAsset == null){
-                return "Error updating policy: either this ID doesn't exist or there was an issue on Fabric side while reading asset.";
-            }
-            originalAsset.authorizedDevices.addAll(authorizedDevices);
-            originalAsset.authorizedUsers.addAll(authorizedUsers);
-            contract.submitTransaction("UpdateAsset", deviceId, originalAsset.owner, originalAsset.name, originalAsset.region,
-                    originalAsset.iPFSHash, new Gson().toJson(originalAsset.authorizedDevices), new Gson().toJson(originalAsset.authorizedUsers));
-            System.out.println("******** updateAccessPolicy transaction committed successfully");
-            return "Success";
-        } catch (EndorseException | SubmitException | CommitStatusException | CommitException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return "Error while updating policy";
-        }
-    }
-
     public String pushIPFSHashToFabric(String deviceId, String hash){
         try {
             System.out.println("\n--> Submit Transaction: pushIPFSHashToFabric");
-            // if any parameter is null, set it to empty string
             Asset originalAsset = readAsset(deviceId);
             if (originalAsset == null){
-                return "Error updating policy: either this ID doesn't exist or there was an issue on Fabric side while reading asset.";
+                return "Error updating policy: either this device ID doesn't exist or there was an issue on the Fabric side while reading the asset.";
             }
             contract.submitTransaction("UpdateAsset", deviceId, originalAsset.owner, originalAsset.name, originalAsset.region,
                     hash, new Gson().toJson(originalAsset.authorizedDevices), new Gson().toJson(originalAsset.authorizedUsers));
