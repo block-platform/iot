@@ -1,10 +1,12 @@
 import requests
 import json
 
+str = str("ABCD")
+
 
 parameters = {
     'device_id' : 'dev1',
-    'ipfs_hash' : 'ABCDEFGHIJKLMNOQ',
+    'ipfs_hash' : str,
     'device_key': 'abcd'
 }
 
