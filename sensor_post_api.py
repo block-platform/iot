@@ -42,7 +42,7 @@ string = "Temperature in Celsius is " + str(ctemp)
 
 
 files = {
-'temperature': (string),
+'temperature': ctemp,
 'timestamp': datetime.now().timestamp(),
 }
 
