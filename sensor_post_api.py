@@ -2,6 +2,7 @@ import requests
 import json
 import smbus
 import time
+from datetime import datetime
 
 projectId = "2C3ti7yXc1nkKH6WNlNrrT13VKF"
 projectSecret = "0e905e5ebd6c5aa010bb00fdb2ee8869"
@@ -41,7 +42,8 @@ string = "Temperature in Celsius is " + str(ctemp)
 
 
 files = {
-'file': (string),
+'temperature': (string),
+'timestamp': datetime.now().timestamp(),
 }
 
 response = requests.post(endpoint + '/api/v0/add', files=files, auth=(projectId, projectSecret))
@@ -54,7 +56,7 @@ hash = str(hash)
 parameters = {
     'device_id' : 'dev1',
     'ipfs_hash' : hash,
-    'device_key': 'abcd'
+    'device_key': 'OGqwsyc8u8'
 }
 
 response = requests.put("http://10.0.0.120:5000/iot/ipfs-hash", json = parameters)
