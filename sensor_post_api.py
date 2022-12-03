@@ -60,7 +60,7 @@ hash = str(hash)
 
 parameters = {
     'device_id': 'dev-1',
-    'ipfs_hash': hash,
+    'ipfs_hash': [hash],
     'device_key': 'OGqwsyc8u8'
 }
 
