@@ -70,7 +70,7 @@ while(1):
     response = requests.put(endpoint_aws, json = parameters)
     print(response)
     data = response.text
-    json = json.loads(data)
-    print(json)
+    json_response = json.loads(data)
+    print(json_response)
     
-    time.sleep(30)
+    time.sleep(60)
